@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>01.01 - Basic scene</title>
+    <script src="./libs/three.js"></script>
+    <script src="./libs/OrbitControls.js"></script>
+
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<script>
+
+    // global variables
+    var renderer;
+    var scene;
+    var camera;
+    var cameraControl;
+
+    /**
+     * Initializes the scene, camera and objects. Called when the window is
+     * loaded by using window.onload (see below)
+     */
+    function init() {
+
+        // create a scene, that will hold all our elements such as objects, cameras and lights.
+        scene = new THREE.Scene();
+
+
+        // create a camera, which defines where we're looking at.
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        cameraControl = new THREE.OrbitControls(camera);
+
+        // create a render, sets the background color and the size
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0x000000, 1.0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMapEnabled = true;
+
+        //texture
+        var matexture = THREE.ImageUtils.loadTexture("./textures/planets/earthmap10k.jpg");
+        var materialEarth = new THREE.MeshPhongMaterial({map: matexture});
+        var matextureMoon = THREE.ImageUtils.loadTexture("./textures/animals/cat.jpg");
+        var materialMoon = new THREE.MeshPhongMaterial({map: matextureMoon});
+        var matextureNuage = THREE.ImageUtils.loadTexture("./textures/planets/fair_clouds_4k.png");
+        var materialNuage = new THREE.MeshPhongMaterial({map: matextureNuage});
+		
+		var matextureSky = new THREE.ImageUtils.loadTexture("./textures/planets/starry_background.jpg");
+		var materialSky = new THREE.MeshPhongMaterial({map: matextureSky});
+		
+		var normalMap = THREE.ImageUtils.loadTexture("./textures/planets/earth_normalmap_flat4k.jpg");
+        // position and point the camera to the center of the scene
+        camera.position.x = 10;
+        camera.position.y = 6;
+        camera.position.z = 13;
+        camera.lookAt(scene.position);
+
+		materialEarth.normalMap = normalMap;
+
+
+
+        var Earth = new THREE.SphereGeometry( 5, 32, 32 );
+        var Nuage = new THREE.SphereGeometry( 5.1, 32, 32 );
+		var Sky = new THREE.SphereGeometry( 100, 32, 32 );
+
+        //var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        var sphere = new THREE.Mesh( Earth, materialEarth );
+        var sphereNuage = new THREE.Mesh( Nuage, materialNuage );
+		var sphereSky = new THREE.Mesh(Sky, materialSky);
+		
+        //Todo : transparent
+        materialNuage.transparent = true;
+        scene.add( sphereNuage );
+        scene.add( sphere );
+		scene.add(sphereSky);
+
+		sphereSky.material.side = THREE.DoubleSide;
+
+        var moon = new THREE.SphereGeometry( 1, 30, 30 );
+    
+        var moonSphere = new THREE.Mesh( moon, materialMoon );
+          moonSphere.position.x = 10;
+          moonSphere.position.y = 10;
+          moonSphere.position.z = 10;
+
+        scene.add( moonSphere );
+
+
+     
+
+         var directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight2.position.x = 10;
+        // = new THREE.Vector3(10,10,10);
+        directionalLight2.name='directional';
+        scene.add(directionalLight2);
+
+        var ambientLight = new THREE.AmbientLight(0x111111);
+        ambientLight.name='ambient';
+        scene.add(ambientLight);
+
+
+
+
+        // add the output of the renderer to the html element
+        document.body.appendChild(renderer.domElement);
+
+        // call the render function, after the first render, interval is determined
+        // by requestAnimationFrame
+        render();
+    }
+
+    /**
+     * Called when the scene needs to be rendered. Delegates to requestAnimationFrame
+     * for future renders
+     */
+    function render() {
+        //Mouvement Camera
+        var rotSpeed = 0.005;
+        camera.position.x = camera.position.x * Math.cos(rotSpeed) + camera.position.z * Math.sin(rotSpeed);
+        camera.position.z = camera.position.z * Math.cos(rotSpeed) - camera.position.x * Math.sin(rotSpeed);
+        camera.lookAt(scene.position);
+         
+        
+
+        cameraControl.update();
+
+        // render using requestAnimationFrame
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+
+    }
+
+
+    /**
+     * Function handles the resize event. This make sure the camera and the renderer
+     * are updated at the correct moment.
+     */
+    function handleResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // calls the init function when the window is done loading.
+    window.onload = init;
+    // calls the handleResize function when the window is resized
+    window.addEventListener('resize', handleResize, false);
+
+</script>
+<body>
+</body>
+</html>
