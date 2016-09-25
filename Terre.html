@@ -119,7 +119,7 @@
      */
     function render() {
         //Mouvement Camera
-        var rotSpeed = 0.005;
+        var rotSpeed = 0.001;
         camera.position.x = camera.position.x * Math.cos(rotSpeed) + camera.position.z * Math.sin(rotSpeed);
         camera.position.z = camera.position.z * Math.cos(rotSpeed) - camera.position.x * Math.sin(rotSpeed);
         camera.lookAt(scene.position);
