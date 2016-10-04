@@ -21,6 +21,8 @@
     var scene;
     var camera;
     var cameraControl;
+	var projector;
+	var collidableMeshList = new Array();
 
     /**
      * Initializes the scene, camera and objects. Called when the window is
@@ -30,6 +32,7 @@
 
         // create a scene, that will hold all our elements such as objects, cameras and lights.
         scene = new THREE.Scene();
+		projector = new THREE.Projector();
 
 
         // create a camera, which defines where we're looking at.
@@ -104,7 +107,9 @@
         scene.add(ambientLight);
 
 		readFileData();
-
+		
+		
+			
 
         // add the output of the renderer to the html element
         document.body.appendChild(renderer.domElement);
@@ -145,6 +150,26 @@
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
+	
+	function onDocumentMouseDown(event)
+    {
+		event.preventDefault();	
+		var vector = new THREE.Vector3((event.clientX / window.innerWidth)
+		*2-1,-(event.clientY / window.innerHeight)
+		*2+1,0.5);
+		projector.unprojectVector(vector,camera);
+		var raycaster = new THREE.Raycaster(camera.position,vector.sub(camera.position).normalize());
+		var intersects = raycaster.intersectObjects(collidableMeshList);
+		
+		if(intersects.length>0)
+		{
+			intersects[0].object.material.transparent=true;
+			intersects[0].object.material.color = new THREE.Color(0x0000ff);
+			
+		}
+	}
+	
+	
 	
 	 function readFileData()
     {
@@ -229,6 +254,8 @@
 
             cube.lookAt(scene.position);
             scene.add(cube);
+			collidableMeshList.push(cube);
+		
 
         }
 		function convertCoordinates(lat, lon, radius, heigth) {
@@ -241,6 +268,7 @@
 
             return new THREE.Vector3(x,y,z);
         }
+		window.onmousedown=onDocumentMouseDown;	
 
     // calls the init function when the window is done loading.
     window.onload = init;
