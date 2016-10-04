@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>01.01 - Basic scene</title>
+	<script src="./libs/jquery-1.9.0.js"></script>
     <script src="./libs/three.js"></script>
     <script src="./libs/OrbitControls.js"></script>
 
@@ -102,7 +103,7 @@
         ambientLight.name='ambient';
         scene.add(ambientLight);
 
-
+		readFileData();
 
 
         // add the output of the renderer to the html element
@@ -144,6 +145,102 @@
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
+	
+	 function readFileData()
+    {
+        $(document).ready(function() {
+			$.ajax({
+				type: "GET",
+				url: "data/nuclear_clean.csv",
+				dataType: "text",
+				success: function(data) {processData(data);}
+			 });
+		});
+    }
+	
+	   function processData(allText) {
+        var allTextLines = allText.split(/\r\n|\n/);
+        var headers = allTextLines[0].split(';');
+        var lines = [];
+
+        for (var i=1; i<allTextLines.length; i++) {
+            var data = allTextLines[i].split(';');
+            if (data.length == headers.length) {
+
+                var tarr = [];
+                for (var j=0; j<headers.length; j++) {
+                    tarr.push(data[j]);
+                }
+              
+                lines.push(tarr);
+            }
+        }
+
+        jQuery.each(lines, function(index, el) {
+
+            console.log(el[2])
+            createRectangleData(el[2] + ',' + el[3], el[5]*0.1, el[6]*0.1)
+             /*jQuery.each(el, function(i, v) {
+            console.log(v[]);
+            });*/
+        });
+     
+    }
+
+    function createRectangleData(coord_, nbReacActif, nbReacInactif)
+    {
+            
+            var geometry = new THREE.CubeGeometry(0.01, 0.01, 6+nbReacActif); 
+            var material = new THREE.MeshBasicMaterial({ color: 0xFF000 }); 
+            var cube = new THREE.Mesh(geometry, material); 
+
+            coord = coord_.split(",");
+            var latitude = coord[0];
+            var longitude = coord[1];
+            var earthRadius = 1;
+
+            var pointRadius = 2;
+            var position = convertCoordinates(latitude, longitude, earthRadius, pointRadius / 2);
+          
+             
+            cube.position.x = position.x,
+            cube.position.y = position.y;
+            cube.position.z = position.z;
+
+            cube.lookAt(scene.position);
+            scene.add(cube);
+
+            var geometry = new THREE.CubeGeometry(0.01, 0.01, 6+nbReacInactif); 
+            var material = new THREE.MeshBasicMaterial({ color: 0xFF0000 }); 
+            var cube = new THREE.Mesh(geometry, material); 
+
+            coord = coord_.split(",");
+            var latitude = coord[0];
+            var longitude = coord[1];
+            var earthRadius = 1;
+
+            var pointRadius = 2;
+            var position = convertCoordinates(latitude, longitude, earthRadius, pointRadius / 2);
+          
+             
+            cube.position.x = position.x,
+            cube.position.y = position.y;
+            cube.position.z = position.z;
+
+            cube.lookAt(scene.position);
+            scene.add(cube);
+
+        }
+		function convertCoordinates(lat, lon, radius, heigth) {
+            var phi = (lat)*Math.PI/180;
+            var theta = (lon-180)*Math.PI/180;
+
+            var x = -(radius+heigth) * Math.cos(phi) * Math.cos(theta);
+            var y = (radius+heigth) * Math.sin(phi);
+            var z = (radius+heigth) * Math.cos(phi) * Math.sin(theta);
+
+            return new THREE.Vector3(x,y,z);
+        }
 
     // calls the init function when the window is done loading.
     window.onload = init;
