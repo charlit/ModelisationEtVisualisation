@@ -51,9 +51,9 @@
         // create a camera, which defines where we're looking at.
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);        
         // position and point the camera to the center of the scene
-        camera.position.x = 10;
-        camera.position.y = 6;
-        camera.position.z = 13;
+        camera.position.x = 50;
+        camera.position.y = 56;
+        camera.position.z = 53;
         camera.lookAt(scene.position);
         cameraControl = new THREE.OrbitControls(camera);
       
@@ -70,7 +70,7 @@ function addboule()
 {
 		for(i=0; i<10; i++)
 		{
-        var sphere_geometry = new THREE.SphereGeometry( 1.5, 32, 32 );
+        var sphere_geometry = new THREE.SphereGeometry( Math.random()*1.5, 32, 32 );
         var shape, material = new THREE.MeshLambertMaterial({ opacity: 1, transparent: true });
         shape = new Physijs.SphereMesh(
 						sphere_geometry,
