@@ -152,17 +152,6 @@ function addboule()
 	    plane.computeVertexNormals(true);
 	    plane.computeFaceNormals(true);
 
-	    /*var mat = new THREE.MeshPhongMaterial();
-	    mat.map = THREE.ImageUtils.loadTexture("./textures/ground/grasslight-big.jpg");
-
-
-	    mat.vertexColors = THREE.FaceColors;
-	    mat.shading = THREE.NoShading;
-
-	    var groundMesh = new THREE.Mesh(plane, mat);
-	  	groundMesh.rotation.x =  -(Math.PI / 2);*/
-
-
 
 		ground_material = Physijs.createMaterial(
         	new THREE.MeshPhongMaterial({map: THREE.ImageUtils.loadTexture('./textures/ground/grasslight-big.jpg')}),
