@@ -2,7 +2,7 @@
 
 I5-Arnaud Labenne EPSI 2016
 
-TP Basic Scene
+TP Basic Scene : Carré
 
 TP Terre : Affichage des valeurs des centrales nucléaires.
 
